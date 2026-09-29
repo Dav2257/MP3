@@ -155,9 +155,11 @@ fastify.get('/api/download', async (request, reply) => {
   fastify.log.info(`Processing download for: ${finalFilename} (${selectedBitrate} kbps)`)
 
   return new Promise((resolve, reject) => {
-    // Highly optimized arguments for maximum speed audio extraction & encoding
+    // Highly optimized arguments with Node.js runtime for unthrottled fast download
     const args = [
       '--ffmpeg-location', ffmpegPath,
+      '--js-runtimes', 'node',
+      '--extractor-args', 'youtube:player_client=android,web',
       '-f', 'ba[ext=m4a]/ba/b',
       '--extract-audio',
       '--audio-format', 'mp3',

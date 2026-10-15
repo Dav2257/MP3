@@ -41,3 +41,9 @@ __screenshots__/
 # Firebase
 .firebase/
 
+# Binaries & local logs
+server/bin/cloudflared.exe
+server.log*
+server_error.log*
+
+

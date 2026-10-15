@@ -1,7 +1,7 @@
 import type { MediaItem, Bitrate, MediaMetadata } from '@/types/media'
 import { searchMockTracks, parseMockUrl } from '@/services/mockData'
 
-const API_BASE = '/api'
+const API_BASE = (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/$/, '') : '') || '/api'
 
 export async function searchYouTube(query: string): Promise<MediaItem[]> {
   try {

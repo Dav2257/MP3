@@ -12,7 +12,13 @@ const __dirname = path.dirname(__filename)
 
 const projectRoot = path.resolve(__dirname, '..')
 const tempDir = path.join(projectRoot, 'server', 'temp')
-const ytDlpPath = path.join(projectRoot, 'server', 'bin', 'yt-dlp.exe')
+const isWindows = process.platform === 'win32'
+const localYtDlpWindows = path.join(projectRoot, 'server', 'bin', 'yt-dlp.exe')
+const localYtDlpLinux = path.join(projectRoot, 'server', 'bin', 'yt-dlp')
+
+const ytDlpPath = isWindows
+  ? localYtDlpWindows
+  : (fs.existsSync(localYtDlpLinux) ? localYtDlpLinux : 'yt-dlp')
 const ffmpegPath = ffmpegInstaller?.path || 'ffmpeg'
 
 if (!fs.existsSync(tempDir)) {

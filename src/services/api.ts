@@ -1,11 +1,24 @@
 import type { MediaItem, Bitrate, MediaMetadata } from '@/types/media'
 import { searchMockTracks, parseMockUrl } from '@/services/mockData'
 
-const API_BASE = (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/$/, '') : '') || '/api'
+export function getApiBase(): string {
+  if (typeof window !== 'undefined') {
+    const urlParams = new URLSearchParams(window.location.search)
+    const apiParam = urlParams.get('api')
+    if (apiParam) {
+      localStorage.setItem('audiodrop_api_url', apiParam.replace(/\/$/, ''))
+      return apiParam.replace(/\/$/, '')
+    }
+    const saved = localStorage.getItem('audiodrop_api_url')
+    if (saved) return saved.replace(/\/$/, '')
+  }
+  return (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/$/, '') : '') || '/api'
+}
 
 export async function searchYouTube(query: string): Promise<MediaItem[]> {
+  const apiBase = getApiBase()
   try {
-    const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}`, {
+    const res = await fetch(`${apiBase}/search?q=${encodeURIComponent(query)}`, {
       headers: { 'Accept': 'application/json' }
     })
     
@@ -28,8 +41,9 @@ export async function searchYouTube(query: string): Promise<MediaItem[]> {
 }
 
 export async function parseYouTubeUrl(url: string): Promise<MediaItem> {
+  const apiBase = getApiBase()
   try {
-    const res = await fetch(`${API_BASE}/media`, {
+    const res = await fetch(`${apiBase}/media`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -70,5 +84,5 @@ export function buildDownloadStreamUrl(
     year: meta.year || ''
   })
 
-  return `${API_BASE}/download?${params.toString()}`
+  return `${getApiBase()}/download?${params.toString()}`
 }
